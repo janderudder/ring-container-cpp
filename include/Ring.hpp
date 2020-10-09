@@ -1,5 +1,6 @@
 #pragma once
 #include <initializer_list>
+#include <memory>
 #include <type_traits>
 #include <vector>
 
@@ -7,33 +8,23 @@
  template <typename T, typename Alloc =std::allocator<T>>
 class Ring
 {
+public:
+    using index_t = std::size_t;
+
+private:
     std::vector<T, Alloc>   m_storage;
-    size_t                  m_latest_index;
+    size_t                  m_data_size;
+    index_t                 m_end_index;
 
 public:
-    explicit Ring(Alloc const& =Alloc()) noexcept;
-    Ring(size_t, std::initializer_list<T> ={}, Alloc const& =Alloc());
+    Ring(size_t sz, T const& = T()) noexcept;
 
-    template <class... Args> void emplace(Args&&...);
-    void insert(T const&);
-    void insert(T&&);
-    void pop();
-    void clear();
+    void push_back(T const&);
+    void pop_back();
 
-    auto operator[](size_t) const   -> T const&;
-    auto operator[](size_t)         -> T&;
-    size_t latest_index() const;
-    size_t oldest_index() const;
+    auto data() const -> std::vector<T, Alloc>;
 
-    auto latest() const -> T const&;
-    auto latest()       -> T&;
-    auto oldest() const -> T const&;
-    auto oldest()       -> T&;
-
-    auto size() const   -> size_t;  // item capacity (ring's size)
-    auto count() const  -> size_t;  // actual number of stored items
-    bool empty() const;
-    bool full() const;
+    auto size() const -> size_t;
 
 };
 
