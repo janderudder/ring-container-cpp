@@ -21,10 +21,13 @@ public:
 
     void push_back(T const&);
     void pop_back();
+    void clear();
 
     auto data() const -> std::vector<T, Alloc>;
 
-    auto size() const -> size_t;
+    auto size() const       -> size_t;
+    auto item_count() const -> size_t;
+    bool empty() const;
 
 };
 

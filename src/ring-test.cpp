@@ -13,7 +13,7 @@ int main()
     EXPECT(r.size() == ring_size, "ring size is ring_size");
     {
     auto const data = r.data();
-    EXPECT(data.size() == 0, "ring's data size is 0");
+    EXPECT(data.empty(), "ring's data is empty");
     }
 
     r.push_back(0);

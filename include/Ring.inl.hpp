@@ -53,6 +53,16 @@ void Ring<T,A>::pop_back()
 
 
 
+ template <class T, class A>
+void Ring<T,A>::clear()
+{
+    m_data_size = 0;
+    m_end_index = 0;
+}
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
  template <class T, class A>
 auto Ring<T,A>::data() const -> std::vector<T,A>
@@ -91,4 +101,22 @@ auto Ring<T,A>::data() const -> std::vector<T,A>
 auto Ring<T,A>::size() const -> size_t
 {
     return m_storage.size();
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::item_count() const -> size_t
+{
+    return m_data_size;
+}
+
+
+
+
+ template <class T, class A>
+bool Ring<T,A>::empty() const
+{
+    return m_data_size == 0;
 }
