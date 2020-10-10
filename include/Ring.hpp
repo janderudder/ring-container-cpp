@@ -31,6 +31,7 @@ public:
     Ring(size_t sz, std::initializer_list<T>);
 
     void push_back(T const&);
+    void push_back(T&&);
     void pop_back();
     void clear();
     void resize(size_t, T const& = T());

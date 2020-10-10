@@ -9,7 +9,6 @@ Ring<T,A>::Ring(size_t sz, T const& item_model)
     , m_data_size {0}
     , m_end_index {0}
 {
-    m_storage.shrink_to_fit();
 }
 
 
@@ -21,7 +20,6 @@ Ring<T,A>::Ring(std::initializer_list<T> const items)
     , m_data_size   {m_storage.size()}
     , m_end_index   {0}
 {
-    m_storage.shrink_to_fit();
 }
 
 
@@ -34,7 +32,6 @@ Ring<T,A>::Ring(size_t sz, std::initializer_list<T> const items)
     , m_end_index {sz < items.size() ? 0 : items.size()}
 {
     m_storage.resize(sz);
-    m_storage.shrink_to_fit();
 }
 
 
@@ -49,6 +46,24 @@ void Ring<T,A>::push_back(T const& item)
     }
 
     m_storage[m_end_index] = item;
+    ++m_end_index;
+
+    if (m_end_index == size()) {
+        m_end_index = 0;
+    }
+}
+
+
+
+
+ template <class T, class A>
+void Ring<T,A>::push_back(T&& item)
+{
+    if (m_data_size < size()) {
+        ++m_data_size;
+    }
+
+    m_storage[m_end_index] = std::move(item);
     ++m_end_index;
 
     if (m_end_index == size()) {
