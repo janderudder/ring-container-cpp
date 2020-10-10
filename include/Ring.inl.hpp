@@ -9,6 +9,7 @@ Ring<T,A>::Ring(size_t sz, T const& item_model)
     , m_data_size {0}
     , m_end_index {0}
 {
+    m_storage.shrink_to_fit();
 }
 
 
@@ -20,6 +21,7 @@ Ring<T,A>::Ring(std::initializer_list<T> const items)
     , m_data_size   {m_storage.size()}
     , m_end_index   {0}
 {
+    m_storage.shrink_to_fit();
 }
 
 
@@ -32,6 +34,7 @@ Ring<T,A>::Ring(size_t sz, std::initializer_list<T> const items)
     , m_end_index {sz < items.size() ? 0 : items.size()}
 {
     m_storage.resize(sz);
+    m_storage.shrink_to_fit();
 }
 
 
@@ -83,6 +86,50 @@ void Ring<T,A>::clear()
 {
     m_data_size = 0;
     m_end_index = 0;
+}
+
+
+
+
+ template <class T, class A>
+void Ring<T,A>::resize(size_t new_size, T const& item_model)
+{
+    //! WIP
+    //! NOT correctly implemented yet
+
+    // if (new_size > m_data_size && m_end_index >= m_data_size)
+    // {
+    //     // m_end_index =
+    // }
+    if (m_end_index >= new_size)
+    {
+
+    }
+
+    if (new_size < size())
+    {
+        if (m_end_index >= m_data_size)
+        {
+            auto const data_end = m_storage.begin() + m_end_index;
+
+            std::rotate(
+                m_storage.begin(),
+                data_end - new_size,
+                data_end);
+        }
+        else
+        {
+
+        }
+    }
+
+    if (new_size > m_data_size)
+    {
+        if (m_end_index >= m_data_size){
+        }
+    }
+
+    m_storage.resize(new_size);
 }
 
 
@@ -143,15 +190,6 @@ void Ring<T,A>::rotate_data()
 
 
 
-template <class T, class A>
-auto Ring<T,A>::storage_view() const -> std::vector<T,A> const&
-{
-    return m_storage;
-}
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////
  template <class T, class A>
 auto Ring<T,A>::size() const -> size_t
@@ -182,48 +220,135 @@ bool Ring<T,A>::empty() const
 
 ////////////////////////////////////////////////////////////////////////////////
  template <class T, class A>
-void Ring<T,A>::resize(size_t new_size, T const& item_model)
+auto Ring<T,A>::storage() const -> Internal_storage
 {
-    // if (new_size > m_data_size && m_end_index >= m_data_size)
-    // {
-    //     // m_end_index =
-    // }
-    if (m_end_index >= new_size)
-    {
-
-    }
-
-    if (new_size < size())
-    {
-        if (m_end_index >= m_data_size)
-        {
-            auto const data_end = m_storage.begin() + m_end_index;
-
-            std::rotate(
-                m_storage.begin(),
-                data_end - new_size,
-                data_end);
-        }
-        else
-        {
-
-        }
-    }
-
-    if (new_size > m_data_size)
-    {
-        if (m_end_index >= m_data_size){
-        }
-    }
-
-    m_storage.resize(new_size);
+    return {&m_storage};
 }
 
 
 
 
  template <class T, class A>
-void Ring<T,A>::shrink_to_fit()
+auto Ring<T,A>::storage() -> Internal_storage
 {
-    m_storage.shrink_to_fit();
+    return {&m_storage};
+}
+
+
+
+
+// Internal_storage nested class implementation
+////////////////////////////////////////////////////////////////////////////////
+ template <class T, class A>
+Ring<T,A>::Internal_storage::Internal_storage(std::vector<T, A>* storage) noexcept
+    : m_storage_pointer {storage}
+{
+}
+
+
+
+
+ template <class T, class A>
+void Ring<T,A>::Internal_storage::shrink_to_fit()
+{
+    m_storage_pointer->shrink_to_fit();
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::operator[](size_t idx) const -> T const&
+{
+    return (*m_storage_pointer)[idx];
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::size() const -> size_t
+{
+    return m_storage_pointer->size();
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::capacity() const -> size_t
+{
+    return m_storage_pointer->capacity();
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::begin() const
+{
+    return std::begin(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::end() const
+{
+    return std::end(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::cbegin() const
+{
+    return std::cbegin(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::cend() const
+{
+    return std::cend(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::rbegin() const
+{
+    return std::rbegin(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::rend() const
+{
+    return std::rend(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::crbegin() const
+{
+    return std::crbegin(*m_storage_pointer);
+}
+
+
+
+
+ template <class T, class A>
+auto Ring<T,A>::Internal_storage::crend() const
+{
+    return std::crend(*m_storage_pointer);
 }

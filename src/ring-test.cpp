@@ -7,9 +7,6 @@
 
 int main()
 {
-    Ring<double> r2 {4, 0,1,2,4};
-    
-
     constexpr size_t ring_size = 5;
 
     Ring<int> r (ring_size, 0);
@@ -70,7 +67,7 @@ int main()
     }
 
     r.rotate_data();
-    auto const storage = r.storage_view();
+    auto const storage = r.storage();
     auto const data = r.extract_data();
     for (size_t i=0; i < data.size(); ++i)
     {
@@ -80,5 +77,11 @@ int main()
     }
 
     }
+
+
+    //! something to test:
+    //! ------------------------------------
+    //! -  r.resize(r.item_count());
+    //! -  range-for loop on r.storage()
 
 }
