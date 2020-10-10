@@ -94,42 +94,19 @@ void Ring<T,A>::clear()
  template <class T, class A>
 void Ring<T,A>::resize(size_t new_size, T const& item_model)
 {
-    //! WIP
-    //! NOT correctly implemented yet
-
-    // if (new_size > m_data_size && m_end_index >= m_data_size)
-    // {
-    //     // m_end_index =
-    // }
-    if (m_end_index >= new_size)
+    if (new_size > size())
     {
-
+        rotate_data();
+        m_storage.resize(new_size);
+        m_end_index = m_data_size;
     }
-
-    if (new_size < size())
+    else
     {
-        if (m_end_index >= m_data_size)
-        {
-            auto const data_end = m_storage.begin() + m_end_index;
-
-            std::rotate(
-                m_storage.begin(),
-                data_end - new_size,
-                data_end);
-        }
-        else
-        {
-
-        }
+        std::rotate(
+m_storage.begin(),
+m_storage.begin() + (size()-(m_data_size-m_end_index)) + (size()-new_size),
+m_storage.end());
     }
-
-    if (new_size > m_data_size)
-    {
-        if (m_end_index >= m_data_size){
-        }
-    }
-
-    m_storage.resize(new_size);
 }
 
 
@@ -143,6 +120,7 @@ auto Ring<T,A>::extract_data() const -> std::vector<T,A>
     {
         return std::vector<T,A>{};
     }
+
     else if (m_end_index >= m_data_size)
     {
         return {
@@ -150,6 +128,7 @@ auto Ring<T,A>::extract_data() const -> std::vector<T,A>
             m_storage.cbegin() + m_end_index
         };
     }
+
     else
     {
         auto const data_start_index = size() - (m_data_size - m_end_index);
