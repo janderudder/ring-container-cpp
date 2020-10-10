@@ -1,7 +1,12 @@
+/*
+    Ring container
+
+    Resizable, uses std::vector for storage.
+
+*/
 #pragma once
 #include <initializer_list>
 #include <memory>
-#include <type_traits>
 #include <vector>
 
 
@@ -17,13 +22,19 @@ private:
     index_t                 m_end_index;
 
 public:
-    Ring(size_t sz, T const& = T()) noexcept;
+    Ring(size_t sz, T const& = T());
+    Ring(std::initializer_list<T>);
+    Ring(size_t sz, std::initializer_list<T>);
 
     void push_back(T const&);
     void pop_back();
     void clear();
+    void resize(size_t, T const& = T());
+    void shrink_to_fit();
 
-    auto data() const -> std::vector<T, Alloc>;
+    auto extract_data() const -> std::vector<T, Alloc>;
+    void rotate_data();
+    auto storage_view() const -> std::vector<T, Alloc> const&;
 
     auto size() const       -> size_t;
     auto item_count() const -> size_t;
